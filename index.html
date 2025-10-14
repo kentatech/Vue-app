@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Document</title>
+    </head>
+    <body>
+        <div id="app">
+            <span> {{ test }}</span>
+            <span>{{ first_name }} {{ last_name }}</span>
+            <div v-if="mydisplay">loading...</div>
+            <div v-if="6 < 5">Calculate</div>
+            <div v-if="7 > 5 || 100 < 0">Logical OR || checks if one of the conditions is true</div>
+            <div v-if="7 > 5 && 100 > 0">And Operator Displays if all are true</div>
+            <ul>
+                <li v-for="num in nums" style="list-style: none;">{{ num }}</li>
+               
+            </ul>
+            <!-- <ul>
+                 <li v-for="(k,v) in prods">{{k]}}</li>
+            </ul> -->
+            <table>
+                <thead>
+                <tr>
+                    <th style="color: green;">Id</th>
+                    <th>Name</th>
+                    <th style="color: blue;">Buying-Price</th>
+                    <th style="color: red;">Selling-Price</th>
+                </tr>
+                </thead>
+                <tbody>
+                    <tr v-for="prod,i in prods">
+                        <td>{{i+1}}</td>
+                        <td>{{prod.name}}</td>
+                        <td>{{prod.bp}}</td>
+                        <td>{{prod.sp}}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <script
+            src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.7.16/vue.min.js"
+            integrity="sha512-Wx8niGbPNCD87mSuF0sBRytwW2+2ZFr7HwVDF8krCb3egstCc4oQfig+/cfg2OHd82KcUlOYxlSDAqdHqK5TCw=="
+            crossorigin="anonymous"
+            referrerpolicy="no-referrer"
+        ></script>
+
+        <!-- create a Vue Object and bind it to the div with id app -->
+        <!-- 1. Two way data binding -bind a variable in  Vue to htm value -->
+        <!-- 2. Directives (v-if, v-for) if statement and for loop-->
+        <!-- 3.Methods  . A method is used to access a function inside a class-->
+        <!--              A property is variable used inside a class -->
+        <!-- 4. Axios for making HTTP Requests -->
+        <!-- 5.Computed Properties -->
+
+        <script>
+            new Vue({
+                el: "#app",
+                data: {
+                    test: "My Test Variable!",
+                    first_name: "John",
+                    last_name: "Doe",
+                    mydisplay: false,
+                    nums :[1,2,3,4,5],
+                    prods :[
+                        {"name":"Bread","bp":30,"sp":40},
+                        {"name":"Butter","bp":20,"sp":30},
+                        {"name":"Jam","bp":50,"sp":60},
+                    ]
+                },
+            });
+        </script>
+    </body>
+</html>
