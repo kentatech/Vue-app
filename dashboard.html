@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Dashboard</title>
+        <link
+            href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
+            rel="stylesheet"
+            integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB"
+            crossorigin="anonymous"
+        />
+        <link rel="icon" href="/static/favicon.gif" type="image/gif" />
+    </head>
+    <body>
+      <div class="container">
+        <div id="app">
+            <nav class="navbar navbar-expand-lg navabar-dark bg-success">
+                <div class="container">
+                    <a class="navbar-brand" href="/index.html">Inventory App</a>
+                    <button
+                        class="navbar-toggler"
+                        type="button"
+                        data-bs-toggle="collapse"
+                        data-bs-target="#navbarNavDropdown"
+                        aria-controls="navbarNavDropdown"
+                        aria-expanded="false"
+                        aria-label="Toggle navigation"
+                    >
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+                    <div class="collapse navbar-collapse" id="navbarNavDropdown">
+                        <ul class="navbar-nav">
+                            <li class="nav-item">
+                                <a class="nav-link active" aria-current="page" href="/index.html">Home</a>
+                            </li>
+                            <li class="nav-item">
+                            <a class="nav-link" href="/products.html">Products</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="/sales.html">Sales</a>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a
+                                    class="nav-link dropdown-toggle"
+                                    href="#"
+                                    role="button"
+                                    data-bs-toggle="dropdown"
+                                    aria-expanded="false"
+                                >
+                                    More
+                                </a>
+                                <ul class="dropdown-menu">
+                                    <li><a class="dropdown-item" href="#">FAQ</a></li>
+                                    <li><a class="dropdown-item" href="#" @click.prevent="logout">LogOut</a></li>
+                                    <li><a class="dropdown-item" href="#">Contact Us</a></li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </nav>
+        <!-- Card-like structure for the chart and is organized by bootstrap grid-->
+        <div class="row">
+            <div class="col-md-6 col-sm-12 mt-4">
+                <canvas id="bar-chart" width="800" height="450"></canvas>
+            </div>
+        </div>
+    </div>
+        <!-- charts and graphs to display data -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.7.16/vue.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.7.8/axios.min.js"></script>
+         <script
+            src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
+            crossorigin="anonymous"
+        ></script>
+
+        <script>
+            new Vue({
+                el: "#app",
+                data: {
+                    // Data properties can be added here
+                    data: [],
+                    labels:[],
+                },
+                methods: {
+                    async remainingstock() {
+                        axios
+                            .get("http://127.0.0.1:5000/api/dashboard")
+                            .then((response) => {
+                                this.data = response.data.data;
+                                this.labels = response.data.labels;
+                                console.log(this.data);
+                                console.log(this.labels);
+                                // Bar chart
+                                    new Chart(document.getElementById("bar-chart"), {
+                                    type: 'bar',
+                                    data: {
+                                    labels: this.labels,
+                                    datasets: [
+                                        {
+                                        label: "Remaining Stock",
+                                        backgroundColor: ["#3e95cd", "#8e5ea2","#3cba9f","#e8c3b9","#c45850"],
+                                        data: this.data
+                                        }
+                                    ]
+                                    },
+                                    options: {
+                                    legend: { display: false },
+                                    title: {
+                                        display: true,
+                                        text: 'Predicted world population (millions) in 2050'
+                                    }
+                                    }
+                                });
+                            })
+                            .catch((error) => {
+                                console.error("There was an error!", error);
+                            });
+                    },
+                },
+                mounted() {
+                    this.remainingstock();
+                },
+
+            });
+
+        </script>
+    </body>
+</html>

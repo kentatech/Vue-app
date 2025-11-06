@@ -3,74 +3,84 @@
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>Document</title>
+        <title>Home</title>
+        <link
+            href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
+            rel="stylesheet"
+            integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB"
+            crossorigin="anonymous"
+        />
+        <link rel="icon" href="/static/favicon.gif" type="image/gif" />
+        <style>
+            .hero {
+                position: relative;
+                height: 90vh;
+                background: url("/static/Automated\ Inventory\ .png") center center/cover no-repeat;
+            }
+            .hero .overlay {
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background-color: rgba(0, 0, 0, 0.55); /* dark overlay for contrast */
+            }
+            .hero .container {
+                z-index: 2;
+            }
+        </style>
     </head>
     <body>
-        <div id="app">
-            <span> {{ test }}</span>
-            <span>{{ first_name }} {{ last_name }}</span>
-            <div v-if="mydisplay">loading...</div>
-            <div v-if="6 < 5">Calculate</div>
-            <div v-if="7 > 5 || 100 < 0">Logical OR || checks if one of the conditions is true</div>
-            <div v-if="7 > 5 && 100 > 0">And Operator Displays if all are true</div>
-            <ul>
-                <li v-for="num in nums" style="list-style: none;">{{ num }}</li>
-               
-            </ul>
-            <!-- <ul>
-                 <li v-for="(k,v) in prods">{{k]}}</li>
-            </ul> -->
-            <table>
-                <thead>
-                <tr>
-                    <th style="color: green;">Id</th>
-                    <th>Name</th>
-                    <th style="color: blue;">Buying-Price</th>
-                    <th style="color: red;">Selling-Price</th>
-                </tr>
-                </thead>
-                <tbody>
-                    <tr v-for="prod,i in prods">
-                        <td>{{i+1}}</td>
-                        <td>{{prod.name}}</td>
-                        <td>{{prod.bp}}</td>
-                        <td>{{prod.sp}}</td>
-                    </tr>
-                </tbody>
-            </table>
+        <div class="container">
+            <nav class="navbar navbar-expand-lg navbar-dark bg-success">
+                <div class="container-fluid">
+                    <a class="navbar-brand" href="/index.html">Inventory App</a>
+                    <button
+                        class="navbar-toggler"
+                        type="button"
+                        data-bs-toggle="collapse"
+                        data-bs-target="#navbarNavDropdown"
+                        aria-controls="navbarNavDropdown"
+                        aria-expanded="false"
+                        aria-label="Toggle navigation"
+                    >
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+                    <div class="collapse navbar-collapse" id="navbarNavDropdown">
+                        <ul class="navbar-nav">
+                            <li class="nav-item">
+                                <a class="nav-link active" aria-current="page" href="/index.html">Home</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="/register.html">Register</a>
+                            </li>
+                            <li class="nav-item">
+                                <!-- <a class="nav-link" href="/login.html">Login</a> -->
+                                <button href="/login.html" class="btn btn-warning">Login</button>
+                            </li>
+                            
+                        </ul>
+                    </div>
+                </div>
+            </nav>
+            <!-- Hero Section -->
+            <section class="hero d-flex align-items-center justify-content-center text-center text-light">
+                <div class="overlay"></div>
+                <div class="container position-relative">
+                    <h1 class="display-4 fw-bold">Welcome to Our Free Inventory Goods System</h1>
+                    <p class="lead mt-3">Manage your products, sales, and purchases effortlessly — all in one place.</p>
+                    <a href="/products.html" class="btn btn-primary btn-lg mt-4"> Get Started </a>
+                </div>
+            </section>
         </div>
-
         <script
-            src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.7.16/vue.min.js"
-            integrity="sha512-Wx8niGbPNCD87mSuF0sBRytwW2+2ZFr7HwVDF8krCb3egstCc4oQfig+/cfg2OHd82KcUlOYxlSDAqdHqK5TCw=="
+            src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
             crossorigin="anonymous"
-            referrerpolicy="no-referrer"
         ></script>
-
-        <!-- create a Vue Object and bind it to the div with id app -->
-        <!-- 1. Two way data binding -bind a variable in  Vue to htm value -->
-        <!-- 2. Directives (v-if, v-for) if statement and for loop-->
-        <!-- 3.Methods  . A method is used to access a function inside a class-->
-        <!--              A property is variable used inside a class -->
-        <!-- 4. Axios for making HTTP Requests -->
-        <!-- 5.Computed Properties -->
-
         <script>
-            new Vue({
-                el: "#app",
-                data: {
-                    test: "My Test Variable!",
-                    first_name: "John",
-                    last_name: "Doe",
-                    mydisplay: false,
-                    nums :[1,2,3,4,5],
-                    prods :[
-                        {"name":"Bread","bp":30,"sp":40},
-                        {"name":"Butter","bp":20,"sp":30},
-                        {"name":"Jam","bp":50,"sp":60},
-                    ]
-                },
-            });
+            // You can add any JavaScript specific to the index page here
+
         </script>
     </body>
 </html>
