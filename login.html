@@ -11,12 +11,13 @@
             integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB"
             crossorigin="anonymous"
         />
+        <link rel="icon" href="/static/favicon.gif" type="image/gif" />
     </head>
     <body>
         <div class="container">
             <nav class="navbar navbar-expand-lg navbar-dark bg-success">
                 <div class="container-fluid">
-                    <a class="navbar-brand" href="/templates/index.html">Inventory App</a>
+                    <a class="navbar-brand" href="/index.html">Inventory App</a>
                     <button
                         class="navbar-toggler"
                         type="button"
@@ -37,23 +38,13 @@
                                 <a class="nav-link" href="/dashboard.html">Dashboard</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="/register.html">Register</a>
+                                <a class="nav-link" href="/products.html">Products</a>
                             </li>
-                            <li class="nav-item dropdown">
-                                <a
-                                    class="nav-link dropdown-toggle"
-                                    href="#"
-                                    role="button"
-                                    data-bs-toggle="dropdown"
-                                    aria-expanded="false"
-                                >
-                                    More
-                                </a>
-                                <ul class="dropdown-menu">
-                                    <li><a class="dropdown-item" href="#">FAQ</a></li>
-                                    <li><a class="dropdown-item" href="#" @click.prevent="logout">LogOut</a></li>
-                                    <li><a class="dropdown-item" href="#">Contact Us</a></li>
-                                </ul>
+                            <li class="nav-item">
+                                <a class="nav-link" href="/sales.html">Sales</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="/purchases.html">Purchases</a>
                             </li>
                         </ul>
                     </div>
@@ -136,7 +127,7 @@
                                 localStorage.setItem("authToken", resp.data.token);
                                 alert("Login successful!");
                                 // Redirect to the home page or dashboard
-                                window.location.href = "products.html";
+                                window.location.href = "dashboard.html";
                             })
                             .catch((error) => {
                                 console.error("Login error:", error);

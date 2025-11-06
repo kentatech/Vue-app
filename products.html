@@ -5,6 +5,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <link rel="icon" href="/static/favicon.gif" type="image/gif" />
         <title>Products</title>
+        <link rel="icon" href="/static/favicon.gif" type="image/gif" />
         <link
             href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
             rel="stylesheet"
@@ -36,28 +37,19 @@
                                     <a class="nav-link active" aria-current="page" href="/index.html">Home</a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link" href="/purchases.html">Purchases</a>
+                                    <a class="nav-link" href="/dashboard.html">Dashboard</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="/products.html">Products</a>
                                 </li>
                                 <li class="nav-item">
                                     <a class="nav-link" href="/sales.html">Sales</a>
                                 </li>
-                                <li class="nav-item dropdown">
-                                    <a
-                                        class="nav-link dropdown-toggle"
-                                        href="#"
-                                        role="button"
-                                        data-bs-toggle="dropdown"
-                                        aria-expanded="false"
-                                    >
-                                        More
-                                    </a>
-                                    <ul class="dropdown-menu">
-                                        <li><a class="dropdown-item" href="#">FAQ</a></li>
-                                        <li><a class="dropdown-item" href="#" @click.prevent="logout">LogOut</a></li>
-                                        <li><a class="dropdown-item" href="#">Contact Us</a></li>
-                                    </ul>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="/purchases.html">Purchases</a>
                                 </li>
                             </ul>
+                            <a class="d-flex ms-auto btn btn-danger" @click="logout">Logout </a>
                         </div>
                     </div>
                 </nav>
@@ -127,7 +119,7 @@
                 </div>
                 <table
                     id="myTable"
-                    class="table table-info table-hover table-sm table-bordered table-striped-columns"
+                    class="table table-info table-hover table-sm table-bordered table-striped"
                     style="width: 70%; margin: auto"
                 >
                     <thead>

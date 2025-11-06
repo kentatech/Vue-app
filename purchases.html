@@ -12,11 +12,12 @@
             crossorigin="anonymous"
     />
     <link rel="stylesheet" href="https://cdn.datatables.net/2.3.4/css/dataTables.dataTables.css" />
+    <link rel="icon" href="/static/favicon.gif" type="image/gif" />
 </head>
 <body>
        <div class="container">
         <div id="app">
-            <nav class="navbar navbar-expand-lg navabar-dark bg-success">
+            <nav class="navbar navbar-expand-lg navbar-dark bg-success">
                 <div class="container">
                     <a class="navbar-brand" href="/index.html">Inventory App</a>
                     <button
@@ -35,30 +36,23 @@
                             <li class="nav-item">
                                 <a class="nav-link active" aria-current="page" href="/index.html">Home</a>
                             </li>
+                           <li class="nav-item">
+                            <a class="nav-link" href="/dashboard.html">Dashboard</a>
+                            </li>
                             <li class="nav-item">
                             <a class="nav-link" href="/products.html">Products</a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link" href="/sales.html">Sales</a>
                             </li>
-                            <li class="nav-item dropdown">
-                                <a
-                                    class="nav-link dropdown-toggle"
-                                    href="#"
-                                    role="button"
-                                    data-bs-toggle="dropdown"
-                                    aria-expanded="false"
-                                >
-                                    More
-                                </a>
-                                <ul class="dropdown-menu">
-                                    <li><a class="dropdown-item" href="#">FAQ</a></li>
-                                    <li><a class="dropdown-item" href="#" @click.prevent="logout">LogOut</a></li>
-                                    <li><a class="dropdown-item" href="#">Contact Us</a></li>
-                                </ul>
+                            <li class="nav-item">
+                                <a class="nav-link" href="/purchases.html">Purchases</a>
                             </li>
                         </ul>
-                    </div>
+                        <a class="d-flex ms-auto btn btn-danger" @click="logout">Logout</a>
+                    </div> 
+                
+                            
                 </div>
             </nav>
             <!-- Button trigger modal -->
@@ -99,7 +93,7 @@
                 </div>
             </div>
             </div>
-            <table id="myTable" class="table table-info table-hover table-sm table-bordered w-75 mx-auto">
+            <table id="myTable" class="table table-info table-hover table-sm table-bordered table-striped">
                 <thead>
                     <tr>
                         <th>Purchase ID</th>
