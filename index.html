@@ -28,6 +28,17 @@
             .hero .container {
                 z-index: 2;
             }
+
+            .glow-btn {
+                box-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
+            }
+            .hover-zoom:hover {
+                transform: scale(1.1);
+                transition: transform 0.3s ease;
+                color: blue;
+                font-size: larger;
+                border-radius: 5px;
+            }
         </style>
     </head>
     <body>
@@ -52,13 +63,12 @@
                                 <a class="nav-link active" aria-current="page" href="/index.html">Home</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="/register.html">Register</a>
+                                <a class="nav-link hover-zoom" href="/register.html">Register</a>
                             </li>
                             <li class="nav-item">
                                 <!-- <a class="nav-link" href="/login.html">Login</a> -->
-                                <a href="/login.html" class="btn btn-warning">Login</a>
+                                <a href="/login.html" class="btn btn-warning glow-btn">Login</a>
                             </li>
-                            
                         </ul>
                     </div>
                 </div>
@@ -80,7 +90,6 @@
         ></script>
         <script>
             // You can add any JavaScript specific to the index page here
-
         </script>
     </body>
 </html>
