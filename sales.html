@@ -180,7 +180,7 @@
                                 <!-- Button trigger modal -->
                                 <button
                                     type="button"
-                                    class="btn btn-primary"
+                                    class="btn btn-primary btn-sm"
                                     data-bs-toggle="modal"
                                     data-bs-target="#itemsModal"
                                     @click="fetchProducts(item.sale_id)"
@@ -211,9 +211,17 @@
                                 ></button>
                             </div>
                             <div class="modal-body">
-                                <ul v-for="i in soldProducts">
+                                <!-- <ul v-for="i in soldProducts">
                                     <li>{{i}}</li>
-                                </ul>
+                                </ul> -->
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <th></th>
+                                        </tr>
+                                    </thead>
+                                </table>
+
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-primary">Print Receipt</button>
@@ -273,8 +281,7 @@
                             };
                             const response = await axios.get("http://127.0.0.1:5000/api/sales", headers);
                             this.sales = response.data;
-                            // Initialize / refresh DataTable after Vue renders table
-                            // ✅ Initialize or refresh DataTables after Vue finishes rendering
+                            // Initialize and refresh DataTable after Vue renders table
                             this.$nextTick(() => {
                                 if ($.fn.DataTable.isDataTable("#myTable")) {
                                     $("#myTable").DataTable().clear().destroy();

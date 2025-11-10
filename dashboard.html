@@ -19,8 +19,6 @@
                 background-repeat: no-repeat;
                 background-attachment: fixed;
             }
-
-
         </style>
     </head>
     <body>
@@ -64,9 +62,15 @@
             </nav>
         <!-- Card-like structure for the chart and is organized by bootstrap grid-->
         <div class="row">
-            <div class="col-md-6 col-sm-12 mt-4">
-                <canvas id="bar-chart" width="800" height="450"></canvas>
+            <div class="col col-md-6 col-sm-12 col-md-4 col-lg-4 mt-4">
+                <canvas id="bar-chart"></canvas>
             </div>
+            <div class="col col-md-6 col-sm-12 col-md-4 col-lg-4 mt-4">
+                 <canvas id="pie-chart"></canvas>
+            </div>
+            <div class="col col-md-6 col-sm-12 col-md-4 col-lg-4 mt-4">
+                 <canvas id="profit-doughnut-chart"></canvas>
+             </div>
         </div>
     </div>
         <!-- charts and graphs to display data -->
@@ -86,10 +90,14 @@
                     // Data properties can be added here
                     data: [],
                     labels:[],
+                    dataPie:[],
+                    labelsPie:[],
+                    dataDonut:[],
+                    labelsDonut:[],
                 },
                 methods: {
                     async remainingstock() {
-                         try {
+                        try {
                             const headers = {headers: {Authorization: `Bearer ${localStorage.getItem("authToken")}`}};
                             const prods = await axios.get("http://127.0.0.1:5000/api/dashboard", headers);
                             this.products = prods.data;
@@ -121,6 +129,62 @@
                                     }
                                 }
                             });
+                            this.dataPie = this.products.sales_data;
+                            this.labelsPie = this.products.sales_labels;
+
+                            // Pie Chart
+                            new Chart(document.getElementById("pie-chart"), {
+                                type: 'pie',
+                                data: {
+                                    labels: this.labelsPie,
+                                    datasets: [{
+                                        label: "Quantity",
+                                        backgroundColor: ["#3e95cd", "#8e5ea2","#3cba9f","#e8c3b9","#c45850"],
+                                        data: this.dataPie
+                                    }]
+                                },
+                                options: {
+                                    responsive: true,
+                                    plugins: {
+                                        legend: { position: 'bottom' },
+                                        title: {
+                                            display: true,
+                                            text: 'Sale per Product (Quantity)'
+                                        }
+                                    }
+                                }
+                            });
+                            this.dataDonut = this.products.donut_data
+                            this.labelsDonut = this.products.donut_label
+                            //Doughnout
+                            new Chart(document.getElementById("profit-doughnut-chart"), {
+                                type: 'doughnut',
+                                data: {
+                                    labels: this.labelsDonut,
+                                    datasets: [{
+                                        label: "Profit per Product",
+                                        data: this.dataDonut,
+                                        backgroundColor: [
+                                            "#3e95cd", "#8e5ea2", "#3cba9f", "#e8c3b9", "#c45850",
+                                            "#ff9800", "#4caf50", "#f44336", "#00bcd4", "#9c27b0"
+                                        ],
+                                        borderColor: "#ffffff",
+                                        borderWidth: 2
+                                    }]
+                                },
+                                options: {
+                                    responsive: true,
+                                    plugins: {
+                                        legend: {
+                                            position: 'right'
+                                        },
+                                        title: {
+                                            display: true,
+                                            text: 'Profit Distribution per Product'
+                                        }
+                                    }
+                                }
+                             });
                         } catch (error) {
                             console.error("There was an error!", error);
                         }
