@@ -89,39 +89,43 @@
                 },
                 methods: {
                     async remainingstock() {
-                        const headers = {headers: {Authorization: `Bearer ${localStorage.getItem("authToken")}`}};
-                        axios
-                            .get("http://127.0.0.1:5000/api/dashboard",headers)
-                            .then((response) => {
-                                this.data = response.data.data;
-                                this.labels = response.data.labels;
-                                console.log(this.data);
-                                console.log(this.labels);
-                                // Bar chart
-                                    new Chart(document.getElementById("bar-chart"), {
-                                    type: 'bar',
-                                    data: {
+                         try {
+                            const headers = {headers: {Authorization: `Bearer ${localStorage.getItem("authToken")}`}};
+                            const prods = await axios.get("http://127.0.0.1:5000/api/dashboard", headers);
+                            this.products = prods.data;
+                        } catch (error) {
+                            console.error("Must Be Logged in", error);
+                            alert("Failed to fetch data. Please log in.");
+                            window.location.href = "login.html";
+                        }
+                        try {
+                            this.data = this.products.data;
+                            this.labels = this.products.labels;
+                            console.log(this.data);
+                            // Bar chart
+                            new Chart(document.getElementById("bar-chart"), {
+                                type: 'bar',
+                                data: {
                                     labels: this.labels,
-                                    datasets: [
-                                        {
+                                    datasets: [{
                                         label: "Remaining Stock",
-                                        backgroundColor: ["#3e95cd", "#8e5ea2","#3cba9f","#e8c3b9","#c45850"],
+                                        backgroundColor: ["#3e95cd", "#8e5ea2", "#3cba9f", "#e8c3b9", "#c45850"],
                                         data: this.data
-                                        }
-                                    ]
-                                    },
-                                    options: {
+                                    }]
+                                },
+                                options: {
                                     legend: { display: false },
                                     title: {
                                         display: true,
                                         text: 'Predicted world population (millions) in 2050'
                                     }
-                                    }
-                                });
-                            })
-                            .catch((error) => {
-                                console.error("There was an error!", error);
+                                }
                             });
+                        } catch (error) {
+                            console.error("There was an error!", error);
+                        }
+                    
+                  
                     },
                     logout() {
                         // Remove JWT token
@@ -134,9 +138,10 @@
                         window.location.href = "login.html";
                     },
                 },
+                
                 mounted() {
                     this.remainingstock();
-                },
+                }
 
             });
 

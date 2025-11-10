@@ -20,8 +20,6 @@
                 background-repeat: no-repeat;
                 background-attachment: fixed;
             }
-
-
         </style>
     </head>
     <body>
@@ -137,8 +135,11 @@
                                 // You can store the token in localStorage or cookies as needed
                                 localStorage.setItem("authToken", resp.data.token);
                                 alert("Login successful!");
-                                // Redirect to the home page or dashboard
-                                window.location.href = "dashboard.html";
+                                // Redirect to dash or desired page
+                                const params = new URLSearchParams(window.location.search);
+                                const next = params.get("next");
+                                const redirectTo = next && next.trim() !== "" ? next : "dashboard.html";
+                                window.location.assign(redirectTo);
                             })
                             .catch((error) => {
                                 console.error("Login error:", error);

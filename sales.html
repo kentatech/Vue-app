@@ -20,8 +20,6 @@
                 background-repeat: no-repeat;
                 background-attachment: fixed;
             }
-
-
         </style>
     </head>
     <body>
@@ -78,6 +76,7 @@
                     data-bs-keyboard="false"
                     tabindex="-1"
                     aria-labelledby="saleModalLabel"
+                    aria-hidden="true"
                 >
                     <div class="modal-dialog">
                         <div class="modal-content">
@@ -103,7 +102,7 @@
                                                 :value="item.product_id"
                                                 :disabled="item.available_quantity <= 0"
                                             >
-                                                {{ item.product_name }} (Available: {{ item.available_quantity }})
+                                                {{ item.name }} (Available: {{ item.available_quantity }})
                                             </option>
                                         </select>
                                     </div>
@@ -129,7 +128,7 @@
                                                     <th>#</th>
                                                     <th>Product ID</th>
                                                     <th>Quantity</th>
-                                                    <th></th>
+                                                    <th>Action</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -162,22 +161,22 @@
                 <table
                     id="myTable"
                     class="table table-info table-hover table-sm table-bordered table-striped"
-                    style="width: 70%; margin: auto; background-color: azure;"
+                    style="width: 70%; margin: auto"
                 >
                     <thead>
                         <tr>
                             <th>Sale ID</th>
-                            <th>Product ID</th>
+                            <th>Product name</th>
                             <th>Quantity</th>
                             <th>Created at</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr v-for="sale in sales" :key="sale['id']">
-                            <td>{{sale["id"]}}</td>
-                            <td>{{sale["product_id"]}}</td>
-                            <td>{{sale["quantity"]}}</td>
-                            <td>{{sale["created_at"]}}</td>
+                        <tr v-for="(item, index) in flattenedSales" :key="item.sale_id + '-' + index">
+                            <td>{{ item.sale_id }}</td>
+                            <td>{{ item.product_name }}</td>
+                            <td>{{ item.quantity }}</td>
+                            <td>{{ item.created_at }}</td>
                         </tr>
                     </tbody>
                 </table>
@@ -196,43 +195,77 @@
             integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
             crossorigin="anonymous"
         ></script>
-        <script src="https://cdn.datatables.net/2.3.4/js/dataTables.js"></script>
-        <script>
-            let table = new DataTable("#myTable");
-        </script>
+        <!-- <script src="https://cdn.datatables.net/2.3.4/js/dataTables.js"></script> -->
+
         <script>
             new Vue({
                 el: "#app",
                 data: {
-                    sales: [],
-                    stock: [],
+                    sales: [], // populated from API
+                    stock: [], // available stock products
                     newSale: {
+                        // temp object for selecting product and quantity
                         product_id: "",
                         quantity: 1,
                     },
                     saleItems: [], // holds queued sale items
+                    dataTable: null, // DataTable instance
+                },
+                computed: {
+                    flattenedSales() {
+                        const list = [];
+                        this.sales.forEach((sale) => {
+                            // If sale.items exists and is an array
+                            if (Array.isArray(sale.items) && sale.items.length) {
+                                sale.items.forEach((item) => {
+                                    list.push({
+                                        sale_id: sale.sale_id,
+                                        created_at: sale.created_at,
+                                        product_name: item.product_name || "Unknown Product",
+                                        quantity: item.quantity || 0,
+                                    });
+                                });
+                            } else {
+                                // Handle case where no items array exists
+                                list.push({
+                                    sale_id: sale.sale_id,
+                                    created_at: sale.created_at,
+                                    product_name: sale.product_name || "Unknown Product",
+                                    quantity: sale.quantity || 0,
+                                });
+                            }
+                        });
+                        return list;
+                    },
                 },
                 methods: {
                     async fetchSales() {
-                        const headers = {headers: {Authorization: `Bearer ${localStorage.getItem("authToken")}`}};
-                        axios
-                        .get("http://127.0.0.1:5000/api/sales", headers)
-                        .then((response) => {
-                            this.sales = response.data.sales || response.data;
-                            // console.log("Full response:", response.data);
-                        })
-                        .catch((error) => {
-                            console.error("Error fetching sales:", error);
-                        });
+                        try {
+                            const headers = {
+                                headers: {
+                                    Authorization: `Bearer ${localStorage.getItem("authToken")}`,
+                                },
+                            };
+                            const response = await axios.get("http://127.0.0.1:5000/api/sales", headers);
+                            this.sales = response.data;
+                            // Initialize / refresh DataTable after Vue renders table
+                            // this.initializeDataTable();
+                            console.log(this.sales);
+                        } catch (error) {
+                            console.error("Must Be Logged in", error);
+                            alert("Failed to fetch data. Please log in.");
+                            window.location.href = "login.html";
+                        }
                     },
                     async fetchStock() {
                         const headers = {headers: {Authorization: `Bearer ${localStorage.getItem("authToken")}`}};
                         const res = await axios.get("http://127.0.0.1:5000/api/stock", headers);
-                        this.stock = res.data;
+                        this.stock = res.data || res.data.products;
+                        // console.log(this.stock);
                     },
-                    //
+
                     addToList() {
-                        if (!this.newSale.product_id || !this.newSale.quantity || this.newSale.quantity <= 0) {
+                        if (!this.newSale.product_id || !this.newSale.quantity) {
                             alert("Please select a valid product and quantity.");
                             return;
                         }
@@ -260,10 +293,10 @@
                             this.saleItems = [];
                             await this.fetchSales();
                             await this.fetchStock();
-
-                            const modalEl = document.getElementById("saleModal");
-                            const modal = bootstrap.Modal.getInstance(modalEl) || new bootstrap.Modal(modalEl);
-                            modal.hide();
+                            //close modal after submission
+                            // const modalEl = document.getElementById("saleModal");
+                            // const modal = bootstrap.Modal.getInstance(modalEl) || new bootstrap.Modal(modalEl);
+                            // modal.hide();
                         } catch (err) {
                             console.error(err);
                             alert("Error submitting sales.");
@@ -279,7 +312,26 @@
                         // Redirect to login page
                         window.location.href = "login.html";
                     },
+                    // initializeDataTable() {
+                    //     this.$nextTick(() => {
+                    //         // wait for DOM update
+                    //         if (this.dataTable) {
+                    //             this.dataTable.destroy(); // destroy old instance
+                    //             this.dataTable = null;
+                    //         }
+                    //         this.dataTable = new DataTable("#myTable", {
+                    //             responsive: true,
+                    //             pageLength: 10,
+                    //         });
+                    //     });
+                    // },
                 },
+                // watch: {
+                //     // Watch flattenedSales to re-initialize DataTable whenever sales data changes
+                //     flattenedSales() {
+                //         this.initializeDataTable();
+                //     },
+                // },
                 mounted() {
                     if (localStorage.getItem("authToken") !== null) {
                         //Call a method to fetch products directly
@@ -291,5 +343,8 @@
                 },
             });
         </script>
+        <!-- <script>
+            let table = new DataTable("#myTable");
+        </script> -->
     </body>
 </html>
