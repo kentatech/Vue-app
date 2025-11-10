@@ -139,6 +139,7 @@
                                                     <td>
                                                         <button
                                                             class="btn btn-sm btn-danger"
+                                                            type="button"
                                                             @click="removeItem(index)"
                                                         >
                                                             Remove
@@ -148,7 +149,7 @@
                                             </tbody>
                                         </table>
 
-                                        <button class="btn btn-primary w-100 mt-2" @click="submitAll">
+                                        <button class="btn btn-primary w-100 mt-2" type="button" @click="submitAll">
                                             Submit All
                                         </button>
                                     </div>
@@ -204,7 +205,7 @@
                     sales: [], // populated from API
                     stock: [], // available stock products
                     newSale: {
-                        // temp object for selecting product and quantity
+                        // temp object for holding multiple sale items(a list of objects)
                         product_id: "",
                         quantity: 1,
                     },
@@ -265,12 +266,19 @@
                     },
 
                     addToList() {
-                        if (!this.newSale.product_id || !this.newSale.quantity) {
-                            alert("Please select a valid product and quantity.");
+                        const { product_id, quantity } = this.newSale;
+                        if (!product_id) {
+                            alert("Please select a product before adding to the list.");
                             return;
                         }
-                        this.saleItems.push({...this.newSale});
-                        this.newSale = {product_id: "", quantity: 1};
+
+                        if (quantity <= 0) {
+                            alert("Quantity must be greater than zero.");
+                            return;
+                        } else {
+                            this.saleItems.push({...this.newSale});
+                            this.newSale = {product_id: "", quantity: 1};
+                        }
                     },
                     removeItem(index) {
                         this.saleItems.splice(index, 1);
@@ -288,7 +296,8 @@
                                 {items: this.saleItems},
                                 headers
                             );
-                            alert(res.data.message);
+
+                            alert(res.data.message || "Sales submitted successfully!");
 
                             this.saleItems = [];
                             await this.fetchSales();

@@ -125,7 +125,17 @@
             crossorigin="anonymous"
         ></script>
         <script>
-            // You can add any JavaScript specific to the index page here
+            // You can add any custom JavaScript here if needed
+            //when user is logged in login button disppears
+            document.addEventListener("DOMContentLoaded", function () {
+                const token = localStorage.getItem("authToken");
+                if (token) {
+                    const loginBtn = document.querySelector(".glow-btn");
+                    if (loginBtn) {
+                        loginBtn.style.display = "none";
+                    }
+                }
+            });
         </script>
     </body>
 </html>
