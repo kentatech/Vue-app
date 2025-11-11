@@ -202,7 +202,7 @@
                                     data-bs-target="#itemsModal"
                                     @click="fetchProducts(item.sale_id)"
                                 >
-                                    View Items {{ item.sale_id }}
+                                    View Items for Sale Id :{{ item.sale_id }}
                                 </button>
                             </td>
                         </tr>
@@ -353,27 +353,21 @@
                             this.sales = response.data;
                             // Wait for Vue to finish DOM updates
 
-                            // ✅ Wait for Vue to update DOM fully
+                            // Let Vue fully render the rows first
                             this.$nextTick(() => {
-                                const checkReady = setInterval(() => {
-                                    const rowCount = $("#myTable tbody tr").length;
-                                    if (rowCount > 0) {
-                                        clearInterval(checkReady);
-                                        const $table = $("#myTable");
+                                // destroy existing instance if it exists
+                                if ($.fn.DataTable.isDataTable("#myTable")) {
+                                    $("#myTable").DataTable().destroy();
+                                }
 
-                                        if ($.fn.DataTable.isDataTable($table)) {
-                                            $table.DataTable().clear().destroy();
-                                        }
-
-                                        $table.DataTable({
-                                            order: [[0, "desc"]],
-                                            pageLength: 10,
-                                            responsive: true,
-                                        });
-
-                                        console.log(`✅ DataTable initialized with ${rowCount} rows`);
-                                    }
-                                }, 1000); // check every 200ms until rows appear
+                                // small delay ensures table is really in DOM (browser paint done)
+                                setTimeout(() => {
+                                    $("#myTable").DataTable({
+                                        order: [[0, "desc"]],
+                                        pageLength: 10,
+                                        responsive: true,
+                                    });
+                                }, 100); // 100 ms = 0.1 sec is enough
                             });
                         } catch (error) {
                             console.error("Must Be Logged in", error);
@@ -449,9 +443,10 @@
                     if (localStorage.getItem("authToken") !== null) {
                         //Call a method to fetch products directly
                         this.fetchStock();
-                        setTimeout(() => {
-                            this.fetchSales();
-                        }, 1400);
+                        this.fetchSales();
+                        // setTimeout(() => {
+                        //     this.fetchSales();
+                        // }, 500);
                     } else {
                         window.location.href = "login.html";
                     }
