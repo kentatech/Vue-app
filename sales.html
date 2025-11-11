@@ -30,7 +30,7 @@
     <body>
         <div class="container">
             <div id="app">
-                <nav class="navbar navbar-expand-lg navbar-dark bg-success">
+                <nav class="navbar navbar-expand-lg navbar-dark bg-success rounded-1 shadow-lg">
                     <div class="container-fluid">
                         <a class="navbar-brand" href="/index.html">
                             <img src="static/logo supermarket.png" alt="Bootstrap" width="50px" height="50px" />
@@ -265,6 +265,41 @@
                     </div>
                 </div>
             </div>
+            <footer class="bg-dark text-white text-center text-lg-start mt-1">
+                <div class="container p-4">
+                    <div class="row">
+                        <!-- About -->
+                        <div class="col-lg-4 col-md-6 mb-4 mb-md-0">
+                            <h5 class="text-uppercase">About Us</h5>
+                            <p>
+                                We build scalable, elegant solutions for modern businesses. Let's create something
+                                amazing together.
+                            </p>
+                        </div>
+
+                        <!-- Links -->
+                        <div class="col-lg-4 col-md-6 mb-4 mb-md-0">
+                            <h5 class="text-uppercase">Quick Links</h5>
+                            <ul class="list-unstyled mb-0">
+                                <li><a href="#" class="text-white">Twitter</a></li>
+                                <li><a href="#" class="text-white">Linkedin</a></li>
+                                <li><a href="#" class="text-white">Facebook</a></li>
+                                <li><a href="#" class="text-white">Github</a></li>
+                            </ul>
+                        </div>
+
+                        <!-- Contact -->
+                        <div class="col-lg-4 col-md-12 mb-4 mb-md-0">
+                            <h5 class="text-uppercase">Contact</h5>
+                            <p>Email: logankenta254@gmail.com</p>
+                            <p>Phone: +254 701 465 128</p>
+                            <p>Nairobi, Kenya</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="text-center p-3 bg-success">© 2025 Aoyagi Cloud Tech Solutions. All rights reserved.</div>
+            </footer>
         </div>
         <!-- scripts loading before Vue app -->
 
@@ -316,19 +351,33 @@
                             };
                             const response = await axios.get("http://127.0.0.1:5000/api/sales", headers);
                             this.sales = response.data;
-                            // Initialize and refresh DataTable after Vue renders table
+                            // Wait for Vue to finish DOM updates
+
+                            // ✅ Wait for Vue to update DOM fully
                             this.$nextTick(() => {
-                                if ($.fn.DataTable.isDataTable("#myTable")) {
-                                    $("#myTable").DataTable().clear().destroy();
-                                }
-                                $("#myTable").DataTable({
-                                    order: [[0, "desc"]], // first column, descending
-                                });
+                                const checkReady = setInterval(() => {
+                                    const rowCount = $("#myTable tbody tr").length;
+                                    if (rowCount > 0) {
+                                        clearInterval(checkReady);
+                                        const $table = $("#myTable");
+
+                                        if ($.fn.DataTable.isDataTable($table)) {
+                                            $table.DataTable().clear().destroy();
+                                        }
+
+                                        $table.DataTable({
+                                            order: [[0, "desc"]],
+                                            pageLength: 10,
+                                            responsive: true,
+                                        });
+
+                                        console.log(`✅ DataTable initialized with ${rowCount} rows`);
+                                    }
+                                }, 1000); // check every 200ms until rows appear
                             });
-                            console.log(this.sales);
                         } catch (error) {
                             console.error("Must Be Logged in", error);
-                            alert("Failed to fetch data. Please log in.");
+                            alert("Failed to access Sales page. Please log in.");
                             window.location.href = "login.html";
                         }
                     },
@@ -372,10 +421,14 @@
                             );
 
                             alert(res.data.message || "Sales submitted successfully!");
-
                             this.saleItems = [];
+
                             await this.fetchSales();
                             await this.fetchStock();
+
+                            // Extra: close modal automatically for better UX
+                            const modal = bootstrap.Modal.getInstance(document.getElementById("saleModal"));
+                            modal.hide();
                         } catch (err) {
                             console.error(err);
                             alert("Error submitting sales.");
@@ -395,8 +448,10 @@
                 mounted() {
                     if (localStorage.getItem("authToken") !== null) {
                         //Call a method to fetch products directly
-                        this.fetchSales();
                         this.fetchStock();
+                        setTimeout(() => {
+                            this.fetchSales();
+                        }, 1400);
                     } else {
                         window.location.href = "login.html";
                     }

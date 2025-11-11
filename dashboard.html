@@ -25,7 +25,7 @@
     <body>
       <div class="container">
         <div id="app">
-            <nav class="navbar navbar-expand-lg navbar-dark bg-success">
+            <nav class="navbar navbar-expand-lg navbar-dark bg-success rounded-1 shadow-lg">
                 <div class="container">
                     <a class="navbar-brand" href="/index.html">
                         <img src="static/logo supermarket.png" alt="Bootstrap" width="50px" height="50px" />
@@ -76,6 +76,41 @@
                  <canvas id="profit-doughnut-chart"></canvas>
              </div>
         </div>
+        <footer class="bg-dark text-white text-center text-lg-start mt-1">
+                <div class="container p-4">
+                    <div class="row">
+                        <!-- About -->
+                        <div class="col-lg-4 col-md-6 mb-4 mb-md-0">
+                            <h5 class="text-uppercase">About Us</h5>
+                            <p>
+                                We build scalable, elegant solutions for modern businesses. Let's create something
+                                amazing together.
+                            </p>
+                        </div>
+
+                        <!-- Links -->
+                        <div class="col-lg-4 col-md-6 mb-4 mb-md-0">
+                            <h5 class="text-uppercase">Quick Links</h5>
+                            <ul class="list-unstyled mb-0">
+                                <li><a href="#" class="text-white">Twitter</a></li>
+                                <li><a href="#" class="text-white">Linkedin</a></li>
+                                <li><a href="#" class="text-white">Facebook</a></li>
+                                <li><a href="#" class="text-white">Github</a></li>
+                            </ul>
+                        </div>
+
+                        <!-- Contact -->
+                        <div class="col-lg-4 col-md-12 mb-4 mb-md-0">
+                            <h5 class="text-uppercase">Contact</h5>
+                            <p>Email: logankenta254@gmail.com</p>
+                            <p>Phone: +254 701 465 128</p>
+                            <p>Nairobi, Kenya</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="text-center p-3 bg-success">© 2025 Aoyagi Cloud Tech Solutions. All rights reserved.</div>
+            </footer>
     </div>
         <!-- charts and graphs to display data -->
         <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.7.16/vue.min.js"></script>
@@ -106,8 +141,8 @@
                             const prods = await axios.get("http://127.0.0.1:5000/api/dashboard", headers);
                             this.products = prods.data;
                         } catch (error) {
-                            console.error("Must Be Logged in", error);
-                            alert("Failed to fetch data. Please log in.");
+                            // console.error("Must Be Logged in", error);
+                            alert("Cannot access Dashoboard without Logging in. Please log in.");
                             window.location.href = "login.html";
                         }
                         try {
