@@ -162,7 +162,7 @@
 
                 <table
                     id="myTable"
-                    class="table table-info table-hover table-sm table-bordered table-striped"
+                    class="table table-info table-hover table-sm table-bordered table-striped display compact"
                     style="width: 70%; margin: auto"
                 >
                     <thead>
@@ -211,17 +211,35 @@
                                 ></button>
                             </div>
                             <div class="modal-body">
-                                <!-- <ul v-for="i in soldProducts">
-                                    <li>{{i}}</li>
-                                </ul> -->
-                                <table>
+                                <div style="display: flex; justify-content: center; margin-top: 20px;">
+                                    <img
+                                        src="/static/logo supermarket.png"
+                                        alt="logo"
+                                        style="width: 150px; height: 150px"
+                                    />
+                                </div>
+                                <table
+                                    v-for="i in soldProducts"
+                                    class="table table-info table-bordered display compact"
+                                >
                                     <thead>
                                         <tr>
-                                            <th></th>
+                                            <th>Product Id</th>
+                                            <th>Product Name</th>
+                                            <th>Quantity</th>
                                         </tr>
                                     </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>{{i.product_id}}</td>
+                                            <td>{{i.product_name}}</td>
+                                            <td>{{i.quantity}}</td>
+                                        </tr>
+                                    </tbody>
                                 </table>
-
+                                <h3>Total Ammount :</h3>
+                                <h5>Tax 16% :</h5>
+                                <h5>Grand Total :</h5>
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-primary">Print Receipt</button>
@@ -286,7 +304,9 @@
                                 if ($.fn.DataTable.isDataTable("#myTable")) {
                                     $("#myTable").DataTable().clear().destroy();
                                 }
-                                $("#myTable").DataTable();
+                                $("#myTable").DataTable({
+                                    order: [[0, "desc"]], // first column, descending
+                                });
                             });
                             console.log(this.sales);
                         } catch (error) {

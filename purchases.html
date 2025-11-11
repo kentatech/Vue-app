@@ -125,7 +125,7 @@
                 </div>
                 <table
                     id="myTable"
-                    class="table table-info table-hover table-sm table-bordered table-striped"
+                    class="table table-info table-hover table-sm table-bordered table-striped display compact"
                     style="width: 70%; margin: auto"
                 >
                     <thead>
@@ -162,9 +162,7 @@
             crossorigin="anonymous"
         ></script>
         <script src="https://cdn.datatables.net/2.3.4/js/dataTables.js"></script>
-        <script>
-            let table = new DataTable("#myTable");
-        </script>
+
         <script>
             new Vue({
                 el: "#app",
@@ -182,6 +180,15 @@
                             const headers = {headers: {Authorization: `Bearer ${localStorage.getItem("authToken")}`}};
                             const purchs = await axios.get("http://127.0.0.1:5000/api/purchases", headers);
                             this.purchases = purchs.data;
+                            // Wait until Vue updates the table rows, then initialize DataTable
+                            this.$nextTick(() => {
+                                if ($.fn.dataTable.isDataTable("#myTable")) {
+                                    $("#myTable").DataTable().destroy();
+                                }
+                                $("#myTable").DataTable({
+                                    order: [[0, "desc"]], // first column, descending
+                                });
+                            });
                         } catch (error) {
                             console.error("Error fetching purchases:", error);
                             alert("Failed to fetch purchases.");
@@ -212,8 +219,7 @@
                             await axios.post("http://127.0.0.1:5000/api/purchases", this.newPurchase, headers);
                             this.fetchPurchases(); // refresh table
                             this.newPurchase = {product_id: "", quantity: 1}; // reset form
-                            const modal = bootstrap.Modal.getInstance(document.getElementById("staticBackdrop"));
-                            modal.hide();
+                            this.fetchPurchases();
                         } catch (error) {
                             console.error("Error adding purchase:", error);
                         }
