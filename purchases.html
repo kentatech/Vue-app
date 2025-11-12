@@ -85,7 +85,7 @@
                         type="button"
                         class="btn btn-primary"
                         data-bs-toggle="modal"
-                        data-bs-target="#staticBackdrop"
+                        data-bs-target="#saleModal"
                     >
                         Add Purchase
                     </button>
@@ -94,7 +94,7 @@
                 <!-- Modal -->
                 <div
                     class="modal fade"
-                    id="staticBackdrop"
+                    id="saleModal"
                     data-bs-backdrop="static"
                     data-bs-keyboard="false"
                     tabindex="-1"
@@ -104,7 +104,7 @@
                     <div class="modal-dialog">
                         <div class="modal-content">
                             <div class="modal-header">
-                                <h1 class="modal-title fs-5" id="staticBackdropLabel">Add Purchase</h1>
+                                <h1 class="modal-title fs-5" id="saleModal">Add Purchase</h1>
                                 <button
                                     type="button"
                                     class="btn-close"
@@ -256,7 +256,7 @@
                                                     emptyTable: "No sales records available.",
                                                 },
                                             });
-                                        }, 300); // wait 0.3s for DOM paint
+                                        }, 100); // wait 0.1s for DOM paint
                                     }
                                 });
                         } catch (error) {
@@ -289,6 +289,9 @@
                             await axios.post("http://127.0.0.1:5000/api/purchases", this.newPurchase, headers);
                             this.fetchPurchases(); // refresh table
                             this.newPurchase = {product_id: "", quantity: 1}; // reset form
+                            // Extra: close modal automatically for better UX
+                            const modal = bootstrap.Modal.getInstance(document.getElementById("saleModal"));
+                            modal.hide();
                             this.fetchPurchases();
                         } catch (error) {
                             console.error("Error adding purchase:", error);
