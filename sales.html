@@ -219,7 +219,7 @@
                     <div class="modal-dialog">
                         <div class="modal-content">
                             <div class="modal-header">
-                                <h1 class="modal-title fs-5" id="exampleModalLabel">Receipt for Sale</h1>
+                                <h1 class="modal-title fs-5" id="exampleModalLabel">Receipt for Sale </h1>
                                 <button
                                     type="button"
                                     class="btn-close"
@@ -227,7 +227,7 @@
                                     aria-label="Close"
                                 ></button>
                             </div>
-                            <div class="modal-body">
+                            <div class="modal-body" id="receipt">
                                 <div style="display: flex; justify-content: center; margin-top: 20px">
                                     <img
                                         src="/static/logo supermarket.png"
@@ -267,7 +267,7 @@
                                 </div>
                             </div>
                             <div class="modal-footer">
-                                <button type="button" class="btn btn-primary">Print Receipt</button>
+                                <button type="button" class="btn btn-primary" @click="printReceipt">Print Receipt</button>
                             </div>
                         </div>
                     </div>
@@ -403,7 +403,14 @@
                         this.stock = res.data || res.data.products;
                         // console.log(this.stock);
                     },
-
+                    printReceipt() {
+                        const printArea = document.getElementById("receipt").innerHTML;
+                        const original = document.body.innerHTML;
+                        document.body.innerHTML = printArea;
+                        window.print();
+                        document.body.innerHTML = original;
+                        window.location.reload(); // restores Vue after print
+},
                     addToList() {
                         const {product_id, quantity} = this.newSale;
                         if (!product_id) {
