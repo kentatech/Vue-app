@@ -81,7 +81,7 @@
                 </nav>
                 <!-- Button trigger modal -->
                 <div class="d-flex justify-content-center my-3">
-                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#saleModal">
                         Add Product
                     </button>
                 </div>
@@ -89,7 +89,7 @@
                 <!-- Modal -->
                 <div
                     class="modal fade"
-                    id="exampleModal"
+                    id="saleModal"
                     tabindex="-1"
                     aria-labelledby="exampleModalLabel"
                     aria-hidden="true"
@@ -233,14 +233,34 @@
                         try {
                             const headers = {headers: {Authorization: `Bearer ${localStorage.getItem("authToken")}`}};
                             const prods = await axios.get("http://127.0.0.1:5000/api/products", headers);
-                            this.products = prods.data;
-                            // Wait until Vue updates the table rows, then initialize DataTable
-                            this.$nextTick(() => {
-                                if ($.fn.dataTable.isDataTable("#myTable")) {
-                                    $("#myTable").DataTable().destroy();
-                                }
-                                $("#myTable").DataTable(); // simple, full-featured default
-                            });
+                            this.products = prods.data || prods.data.products;
+
+                            // Wait for DOM to re-render
+                                this.$nextTick(() => {
+                                    // Check if DataTable already initialized
+                                    if ($.fn.DataTable.isDataTable("#myTable")) {
+                                        // Get existing table instance
+                                        const table = $("#myTable").DataTable();
+
+                                        // Clear current rows and re-add new DOM
+                                        table.clear();
+                                        table.rows.add($("#myTable tbody tr"));
+                                        table.draw(false); // false = retain pagination
+                                    } else {
+                                        // Initialize only once after DOM update
+                                        setTimeout(() => {
+                                            $("#myTable").DataTable({
+                                                order: [[0, "desc"]],
+                                                pageLength: 10,
+                                                responsive: true,
+                                                autoWidth: false,
+                                                language: {
+                                                    emptyTable: "No sales records available.",
+                                                },
+                                            });
+                                        }, 300); // wait 0.3s for DOM paint
+                                    }
+                                });
                         } catch (error) {
                             alert("Failed to access Products page.Must be Logged in.");
                             window.location.href = "login.html";
@@ -270,8 +290,9 @@
                             await axios.post("http://127.0.0.1:5000/api/products", newProduct, headers);
                             alert("Product added successfully!");
 
-                            // Reset form
-                            this.newProduct = {name: "", buying_price: "", selling_price: ""};
+                            // Extra: close modal automatically for better UX
+                            const modal = bootstrap.Modal.getInstance(document.getElementById("saleModal"));
+                            modal.hide();
 
                             // Refresh product list
                             this.fetchProducts();
@@ -295,8 +316,7 @@
                     if (localStorage.getItem("authToken") !== null) {
                         //Call a method to fetch products directly
                         this.fetchProducts();
-                        // If token exists, redirect to products page
-                        // window.location.href = "products.html";
+                    
                     } else {
                         // console.log("No auth token found, stay on login page");
                         window.location.href = "login.html";

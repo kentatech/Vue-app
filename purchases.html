@@ -232,15 +232,33 @@
                             const headers = {headers: {Authorization: `Bearer ${localStorage.getItem("authToken")}`}};
                             const purchs = await axios.get("http://127.0.0.1:5000/api/purchases", headers);
                             this.purchases = purchs.data;
-                            // Wait until Vue updates the table rows, then initialize DataTable
-                            this.$nextTick(() => {
-                                if ($.fn.dataTable.isDataTable("#myTable")) {
-                                    $("#myTable").DataTable().destroy();
-                                }
-                                $("#myTable").DataTable({
-                                    order: [[0, "desc"]], // first column, descending
+                            
+                            // Wait for DOM to re-render
+                                this.$nextTick(() => {
+                                    // Check if DataTable already initialized
+                                    if ($.fn.DataTable.isDataTable("#myTable")) {
+                                        // Get existing table instance
+                                        const table = $("#myTable").DataTable();
+
+                                        // Clear current rows and re-add new DOM
+                                        table.clear();
+                                        table.rows.add($("#myTable tbody tr"));
+                                        table.draw(false); // false = retain pagination
+                                    } else {
+                                        // Initialize only once after DOM update
+                                        setTimeout(() => {
+                                            $("#myTable").DataTable({
+                                                order: [[0, "desc"]],
+                                                pageLength: 10,
+                                                responsive: true,
+                                                autoWidth: false,
+                                                language: {
+                                                    emptyTable: "No sales records available.",
+                                                },
+                                            });
+                                        }, 300); // wait 0.3s for DOM paint
+                                    }
                                 });
-                            });
                         } catch (error) {
                             console.error("Error fetching purchases:", error);
                             alert(" To access purchases, user must be logged in.");
