@@ -235,9 +235,14 @@
                                         style="width: 150px; height: 150px"
                                     />
                                 </div>
+                                <div v-if="selectedSale">
+                                    <h6>Cashier: Joseph Kenta Aoyagi</h6>
+                                    <h6>Time : {{ selectedSale.created_at }} </h3>    
+                                </div>
+
                                 <table
                                     v-for="i in soldProducts"
-                                    class="table table-info table-bordered display compact"
+                                    class="table table-warning table-striped table-sm table-bordered table-align-middle fs-6 fw-light"
                                 >
                                     <thead>
                                         <tr>
@@ -254,9 +259,12 @@
                                         </tr>
                                     </tbody>
                                 </table>
-                                <h3>Total Ammount :</h3>
-                                <h5>Tax 16% :</h5>
-                                <h5>Grand Total :</h5>
+                                <!-- Only show total for the selected sale -->
+                                <div v-if="selectedSale" class="text-end">
+                                    <h4>Total Amount : {{ selectedSale.total_sale }} Kes</h3>
+                                    <h4>Tax 16% : {{ selectedSale.total_sale * 0.16}} Kes</h4>
+                                    <h3>Grand Total : {{ selectedSale.total_sale * 1.16}} Kes</h3>
+                                </div>
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-primary">Print Receipt</button>
@@ -319,150 +327,151 @@
         <script src="https://cdn.datatables.net/2.3.4/js/dataTables.js"></script>
 
         <script>
-                new Vue({
-                    el: "#app",
-                    data: {
-                        sales: [], // populated from API
-                        stock: [], // available stock products
-                        newSale: {
-                            // temp object for holding multiple sale items(a list of objects)
-                            product_id: "",
-                            quantity: 1,
-                        },
-                        saleItems: [], // holds queued sale items
-                        soldProducts: [], // holds products linked to a particular sale id
+            new Vue({
+                el: "#app",
+                data: {
+                    sales: [], // populated from API
+                    stock: [], // available stock products
+                    newSale: {
+                        // temp object for holding multiple sale items(a list of objects)
+                        product_id: "",
+                        quantity: 1,
                     },
+                    saleItems: [], // holds queued sale items
+                    soldProducts: [], // holds products linked to a particular sale id
+                    selectedSale: null, // the sale object selected
+                },
 
-                    methods: {
-                        async fetchProducts(i) {
-                            // fetch items associated with sale_id
-                            for (const j in this.sales) {
-                                if (this.sales[j].sale_id == i) {
-                                    this.soldProducts = this.sales[j].items;
+                methods: {
+                    async fetchProducts(i) {
+                        // fetch items associated with sale_id
+                        for (const j in this.sales) {
+                            if (this.sales[j].sale_id == i) {
+                                this.soldProducts = this.sales[j].items;
+                                this.selectedSale =this.sales[j];
+                            }
+                        }
+                    },
+                    async fetchSales() {
+                        try {
+                            const headers = {
+                                headers: {
+                                    Authorization: `Bearer ${localStorage.getItem("authToken")}`,
+                                },
+                            };
+                            const response = await axios.get("http://127.0.0.1:5000/api/sales", headers);
+
+                            // Step 1: Update Vue data
+                            this.sales = response.data;
+
+                            // Wait for DOM to re-render
+                            this.$nextTick(() => {
+                                // Check if DataTable already initialized
+                                if ($.fn.DataTable.isDataTable("#myTable")) {
+                                    // Get existing table instance
+                                    const table = $("#myTable").DataTable();
+
+                                    // Clear current rows and re-add new DOM
+                                    table.clear();
+                                    table.rows.add($("#myTable tbody tr"));
+                                    table.draw(false); // false = retain pagination
+                                } else {
+                                    // Initialize only once after DOM update
+                                    setTimeout(() => {
+                                        $("#myTable").DataTable({
+                                            order: [[0, "desc"]],
+                                            pageLength: 10,
+                                            responsive: true,
+                                            autoWidth: false,
+                                            language: {
+                                                emptyTable: "No sales records available.",
+                                            },
+                                        });
+                                    }, 100); // wait 0.1s for DOM paint
                                 }
-                            }
-                        },
-                        async fetchSales() {
-                            try {
-                                const headers = {
-                                    headers: {
-                                        Authorization: `Bearer ${localStorage.getItem("authToken")}`,
-                                    },
-                                };
-                                const response = await axios.get("http://127.0.0.1:5000/api/sales", headers);
-
-                                // Step 1: Update Vue data
-                                this.sales = response.data;
-
-                                // Wait for DOM to re-render
-                                this.$nextTick(() => {
-                                    // Check if DataTable already initialized
-                                    if ($.fn.DataTable.isDataTable("#myTable")) {
-                                        // Get existing table instance
-                                        const table = $("#myTable").DataTable();
-
-                                        // Clear current rows and re-add new DOM
-                                        table.clear();
-                                        table.rows.add($("#myTable tbody tr"));
-                                        table.draw(false); // false = retain pagination
-                                    } else {
-                                        // Initialize only once after DOM update
-                                        setTimeout(() => {
-                                            $("#myTable").DataTable({
-                                                order: [[0, "desc"]],
-                                                pageLength: 10,
-                                                responsive: true,
-                                                autoWidth: false,
-                                                language: {
-                                                    emptyTable: "No sales records available.",
-                                                },
-                                            });
-                                        }, 100); // wait 0.1s for DOM paint
-                                    }
-                                });
-                            
-                            } catch (error) {
-                                console.error("Error fetching sales:", error);
-                                alert("Failed to load Sales.");
-                                window.location.href = "login.html";
-                            }
-                        },
-                        async fetchStock() {
-                            const headers = {headers: {Authorization: `Bearer ${localStorage.getItem("authToken")}`}};
-                            const res = await axios.get("http://127.0.0.1:5000/api/stock", headers);
-                            this.stock = res.data || res.data.products;
-                            // console.log(this.stock);
-                        },
-
-                        addToList() {
-                            const {product_id, quantity} = this.newSale;
-                            if (!product_id) {
-                                alert("Please select a product before adding to the list.");
-                                return;
-                            }
-
-                            if (quantity <= 0) {
-                                alert("Quantity must be greater than zero.");
-                                return;
-                            } else {
-                                this.saleItems.push({...this.newSale});
-                                this.newSale = {product_id: "", quantity: 1};
-                            }
-                        },
-                        removeItem(index) {
-                            this.saleItems.splice(index, 1);
-                        },
-                        async submitAll() {
-                            if (this.saleItems.length === 0) {
-                                alert("Add at least one item before submitting.");
-                                return;
-                            }
-
-                            const headers = {headers: {Authorization: `Bearer ${localStorage.getItem("authToken")}`}};
-                            try {
-                                const res = await axios.post(
-                                    "http://127.0.0.1:5000/api/sales",
-                                    {items: this.saleItems},
-                                    headers
-                                );
-
-                                alert(res.data.message || "Sales submitted successfully!");
-                                this.saleItems = [];
-
-                                // Extra: close modal automatically for better UX
-                                const modal = bootstrap.Modal.getInstance(document.getElementById("saleModal"));
-                                modal.hide();
-
-                                //Refresh all data after submission
-                                await this.fetchSales();
-                                await this.fetchStock();
-
-                            } catch (err) {
-                                console.error(err);
-                                alert("Error submitting sales.");
-                            }
-                        },
-                        logout() {
-                            // Remove JWT token
-                            localStorage.removeItem("authToken");
-
-                            // Notify user
-                            alert("Successfully logged out!");
-
-                            // Redirect to login page
-                            window.location.href = "login.html";
-                        },
-                    },
-                    async mounted() {
-                        if (localStorage.getItem("authToken") !== null) {
-                            //Call a method to fetch sales and stock once app is mounted
-                            this.fetchStock();
-                            this.fetchSales();
-                        } else {
+                            });
+                            console.log(this.sales);
+                        } catch (error) {
+                            console.error("Error fetching sales:", error);
+                            alert("Failed to load Sales.");
                             window.location.href = "login.html";
                         }
                     },
-                });
+                    async fetchStock() {
+                        const headers = {headers: {Authorization: `Bearer ${localStorage.getItem("authToken")}`}};
+                        const res = await axios.get("http://127.0.0.1:5000/api/stock", headers);
+                        this.stock = res.data || res.data.products;
+                        // console.log(this.stock);
+                    },
+
+                    addToList() {
+                        const {product_id, quantity} = this.newSale;
+                        if (!product_id) {
+                            alert("Please select a product before adding to the list.");
+                            return;
+                        }
+
+                        if (quantity <= 0) {
+                            alert("Quantity must be greater than zero.");
+                            return;
+                        } else {
+                            this.saleItems.push({...this.newSale});
+                            this.newSale = {product_id: "", quantity: 1};
+                        }
+                    },
+                    removeItem(index) {
+                        this.saleItems.splice(index, 1);
+                    },
+                    async submitAll() {
+                        if (this.saleItems.length === 0) {
+                            alert("Add at least one item before submitting.");
+                            return;
+                        }
+
+                        const headers = {headers: {Authorization: `Bearer ${localStorage.getItem("authToken")}`}};
+                        try {
+                            const res = await axios.post(
+                                "http://127.0.0.1:5000/api/sales",
+                                {items: this.saleItems},
+                                headers
+                            );
+
+                            alert(res.data.message || "Sales submitted successfully!");
+                            this.saleItems = [];
+
+                            // Extra: close modal automatically for better UX
+                            const modal = bootstrap.Modal.getInstance(document.getElementById("saleModal"));
+                            modal.hide();
+
+                            //Refresh all data after submission
+                            await this.fetchSales();
+                            await this.fetchStock();
+                        } catch (err) {
+                            console.error(err);
+                            alert("Error submitting sales.");
+                        }
+                    },
+                    logout() {
+                        // Remove JWT token
+                        localStorage.removeItem("authToken");
+
+                        // Notify user
+                        alert("Successfully logged out!");
+
+                        // Redirect to login page
+                        window.location.href = "login.html";
+                    },
+                },
+                async mounted() {
+                    if (localStorage.getItem("authToken") !== null) {
+                        //Call a method to fetch sales and stock once app is mounted
+                        this.fetchStock();
+                        this.fetchSales();
+                    } else {
+                        window.location.href = "login.html";
+                    }
+                },
+            });
         </script>
     </body>
 </html>
