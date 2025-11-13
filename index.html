@@ -65,6 +65,8 @@
                         <span class="navbar-toggler-icon"></span>
                     </button>
                     <div class="collapse navbar-collapse" id="navbarNavDropdown">
+
+                      <div id="app"></div>
                         <ul class="navbar-nav">
                             <li class="nav-item">
                                 <a class="nav-link active" aria-current="page" href="/index.html"
@@ -76,13 +78,14 @@
                                     ><i class="bi bi-feather"></i> Register</a
                                 >
                             </li>
-                            <div id="app">
+                            
                             <li  class="nav-item">
                                 <!-- <a class="nav-link" href="/login.html">Login</a> -->
                                 <a href="/login.html" v-if="!isLoggedIn" class="btn btn-warning glow-btn" id="glow-btn">Login</a>
                             </li>
-                            </div>
+                            
                         </ul>
+                      
                     </div>
                 </div>
             </nav>
