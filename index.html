@@ -76,10 +76,12 @@
                                     ><i class="bi bi-feather"></i> Register</a
                                 >
                             </li>
-                            <li class="nav-item">
+                            <div id="app">
+                            <li  class="nav-item">
                                 <!-- <a class="nav-link" href="/login.html">Login</a> -->
                                 <a href="/login.html" v-if="!isLoggedIn" class="btn btn-warning glow-btn" id="glow-btn">Login</a>
                             </li>
+                            </div>
                         </ul>
                     </div>
                 </div>
@@ -187,7 +189,7 @@
 
         <script>
             new Vue({
-                el: ".container",
+                el: "#app",
                 data: {
                     isLoggedIn: false,
                 },
@@ -196,13 +198,10 @@
                         const token = localStorage.getItem("authToken");
                         if (token) {
                             this.isLoggedIn = true;
-                            if(loginBtn){
-                            const loginBtn = document.querySelector(".glow-btn");
-                            loginBtn.style.display = "none";
-                            }
                         }
                         else{
                             console.log("no token detected")
+                            this.isLoggedIn = false;
                         }
                     },
                 },
