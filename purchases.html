@@ -266,7 +266,7 @@
                     },
                     async fetchProducts() {
                         try {
-                            const headers = {headers: {Authorization: `Bearer ${localStorage.getItem("authToken")}`}};
+                            const headers = {headers: {Authorization: `Bearer ${localStorage.getItem("token")}`}};
                             const response = await axios.get("http://127.0.0.1:5000/api/products", headers);
                             this.products = response.data.products || response.data;
                         } catch (error) {
@@ -275,7 +275,7 @@
                     },
 
                     async addPurchase() {
-                        const headers = {headers: {Authorization: `Bearer ${localStorage.getItem("authToken")}`}};
+                        const headers = {headers: {Authorization: `Bearer ${localStorage.getItem("token")}`}};
                         //save product_id and quantity to backend as integer
                         this.newPurchase.product_id = parseInt(this.newPurchase.product_id);
                         this.newPurchase.quantity = parseInt(this.newPurchase.quantity);
@@ -298,7 +298,7 @@
                     },
                     logout() {
                         // Remove JWT token
-                        localStorage.removeItem("authToken");
+                        localStorage.removeItem("token");
 
                         // Notify user
                         alert("Successfully logged out!");
@@ -308,7 +308,7 @@
                     },
                 },
                 mounted() {
-                    if (localStorage.getItem("authToken") !== null) {
+                    if (localStorage.getItem("token") !== null) {
                         //Call a method to fetch products directly
                         this.fetchPurchases();
                         this.fetchProducts(); // fetch products for dropdown
