@@ -228,7 +228,7 @@
                 methods: {
                     async fetchPurchases() {
                         try {
-                            const headers = {headers: {Authorization: `Bearer ${localStorage.getItem("authToken")}`}};
+                            const headers = {headers: {Authorization: `Bearer ${localStorage.getItem("token")}`}};
                             const purchs = await axios.get("http://127.0.0.1:5000/api/purchases", headers);
                             this.purchases = purchs.data;
                             

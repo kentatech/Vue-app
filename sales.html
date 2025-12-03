@@ -356,7 +356,7 @@
                         try {
                             const headers = {
                                 headers: {
-                                    Authorization: `Bearer ${localStorage.getItem("authToken")}`,
+                                    Authorization: `Bearer ${localStorage.getItem("token")}`,
                                 },
                             };
                             const response = await axios.get("http://127.0.0.1:5000/api/sales", headers);
@@ -398,7 +398,7 @@
                         }
                     },
                     async fetchStock() {
-                        const headers = {headers: {Authorization: `Bearer ${localStorage.getItem("authToken")}`}};
+                        const headers = {headers: {Authorization: `Bearer ${localStorage.getItem("token")}`}};
                         const res = await axios.get("http://127.0.0.1:5000/api/stock", headers);
                         this.stock = res.data || res.data.products;
                         // console.log(this.stock);
@@ -435,7 +435,7 @@
                             return;
                         }
 
-                        const headers = {headers: {Authorization: `Bearer ${localStorage.getItem("authToken")}`}};
+                        const headers = {headers: {Authorization: `Bearer ${localStorage.getItem("token")}`}};
                         try {
                             const res = await axios.post(
                                 "http://127.0.0.1:5000/api/sales",
@@ -460,7 +460,7 @@
                     },
                     logout() {
                         // Remove JWT token
-                        localStorage.removeItem("authToken");
+                        localStorage.removeItem("token");
 
                         // Notify user
                         alert("Successfully logged out!");
@@ -470,7 +470,7 @@
                     },
                 },
                 async mounted() {
-                    if (localStorage.getItem("authToken") !== null) {
+                    if (localStorage.getItem("token") !== null) {
                         //Call a method to fetch sales and stock once app is mounted
                         this.fetchStock();
                         this.fetchSales();

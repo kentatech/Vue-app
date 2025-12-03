@@ -230,7 +230,7 @@
                 methods: {
                     async fetchProducts() {
                         try {
-                            const headers = {headers: {Authorization: `Bearer ${localStorage.getItem("authToken")}`}};
+                            const headers = {headers: {Authorization: `Bearer ${localStorage.getItem("token")}`}};
                             const prods = await axios.get("http://127.0.0.1:5000/api/products", headers);
                             this.products = prods.data || prods.data.products;
 
@@ -267,7 +267,7 @@
                     },
                     async addProduct() {
                         try {
-                            const headers = {headers: {Authorization: `Bearer ${localStorage.getItem("authToken")}`}};
+                            const headers = {headers: {Authorization: `Bearer ${localStorage.getItem("token")}`}};
                             // Normalize input for comparison
                             const inputName = this.newProduct.name.trim().toLowerCase();
 

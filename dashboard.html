@@ -137,7 +137,7 @@
                 methods: {
                     async remainingstock() {
                         try {
-                            const headers = {headers: {Authorization: `Bearer ${localStorage.getItem("authToken")}`}};
+                            const headers = {headers: {Authorization: `Bearer ${localStorage.getItem("token")}`}};
                             const prods = await axios.get("http://127.0.0.1:5000/api/dashboard", headers);
                             this.products = prods.data;
                         } catch (error) {
@@ -232,7 +232,7 @@
                     },
                     logout() {
                         // Remove JWT token
-                        localStorage.removeItem("authToken");
+                        localStorage.removeItem("token");
 
                         // Notify user
                         alert("Successfully logged out!");
