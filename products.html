@@ -244,7 +244,7 @@
                                         // Clear current rows and re-add new DOM
                                         table.clear();
                                         table.rows.add($("#myTable tbody tr"));
-                                        table.draw(false); // false = retain pagination
+                                        table.draw(false); // false means retain pagination
                                     } else {
                                         // Initialize only once after DOM update
                                         setTimeout(() => {
@@ -302,7 +302,7 @@
                     },
                     logout() {
                         // Remove JWT token
-                        localStorage.removeItem("authToken");
+                        localStorage.removeItem("token");
 
                         // Notify user
                         alert("Successfully logged out!");
@@ -312,7 +312,7 @@
                     },
                 },
                 mounted() {
-                    if (localStorage.getItem("authToken") !== null) {
+                    if (localStorage.getItem("token") !== null) {
                         //Call a method to fetch products directly
                         this.fetchProducts();
                     
